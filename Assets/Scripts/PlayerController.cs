@@ -1,15 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
     public float rotationSpeed = 100f;
     public float flySpeed = 5f;
+    //odniesienie do menadzera poziomu
+    GameObject levelManagerObject;
+    //stan os³on w procentach (1=100%)
+    float shieldCapacity = 1;
+
     // Start is called before the first frame update
     void Start()
     {
-
+        levelManagerObject = GameObject.Find("LevelManager");
     }
 
     // Update is called once per frame
@@ -53,7 +59,22 @@ public class PlayerController : MonoBehaviour
         //dodaj obrót do obiektu
         //nie mo¿emy u¿yæ += poniewa¿ unity u¿ywa Quaternionów do zapisu rotacji
         transform.Rotate(rotation);
+        UpdateUI();
+    }
 
+    private void UpdateUI()
+    {
+        //metoda wykonuje wszystko zwi¹zane z aktualizacj¹ interfejsu u¿ytkownika
+
+        //wyciagnij z menadzera poziomu pozycje wyjscia
+        Vector3 target = levelManagerObject.GetComponent<LevelManager>().exitPosition;
+        //obroc znacznik w strone wyjscia
+        transform.Find("NavUI").Find("TargetMarker").LookAt(target);
+        //zmien ilosc procentwo widoczna w interfejsie
+        //TODO: poprawiæ wyœwietlanie stanu os³on!
+        TextMeshPro shieldText =
+            GameObject.Find("Canvas").transform.Find("ShieldCapacityText").GetComponent<TextMeshPro>();
+        shieldText.text = " Shield: " + shieldCapacity.ToString() + "%";
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -63,9 +84,13 @@ public class PlayerController : MonoBehaviour
         //sprawdz czy dotknêliœmy asteroidy
         if (collision.collider.transform.CompareTag("Asteroid"))
         {
-            Debug.Log("Boom!");
-            //pauza
-            Time.timeScale = 0;
+            //transform asteroidy
+            Transform asteroid = collision.collider.transform;
+            //policz wektor wed³ug którego odepchniemy asteroide
+            Vector3 shieldForce = asteroid.position - transform.position;
+            //popchnij asteroide
+            asteroid.GetComponent<Rigidbody>().AddForce(shieldForce * 5, ForceMode.Impulse);
+            shieldCapacity -= 0.25f;
         }
     }
 }
