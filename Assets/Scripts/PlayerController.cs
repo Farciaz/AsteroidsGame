@@ -72,9 +72,22 @@ public class PlayerController : MonoBehaviour
         transform.Find("NavUI").Find("TargetMarker").LookAt(target);
         //zmien ilosc procentwo widoczna w interfejsie
         //TODO: poprawiæ wyœwietlanie stanu os³on!
-        TextMeshPro shieldText =
-            GameObject.Find("Canvas").transform.Find("ShieldCapacityText").GetComponent<TextMeshPro>();
-        shieldText.text = " Shield: " + shieldCapacity.ToString() + "%";
+        TextMeshProUGUI shieldText =
+            GameObject.Find("Canvas").transform.Find("ShieldCapacityText").GetComponent<TextMeshProUGUI>();
+        shieldText.text = " Shield: " + (shieldCapacity * 100).ToString() + "%";
+
+        //sprawdzamy czy poziom siê zakoñczy³ i czy musimy wyœwietliæ ekran koñcowy
+        if (levelManagerObject.GetComponent<LevelManager>().levelComplete)
+        {
+            //znajdz canvas (interfejs), znajdz w nim ekran konca poziomu i go w³¹cz
+            GameObject.Find("Canvas").transform.Find("LevelCompleteScreen").gameObject.SetActive(true);
+        }
+        //sprawdzamy czy poziom siê zakoñczy³ i czy musimy wyœwietliæ ekran koñcowy
+        if (levelManagerObject.GetComponent<LevelManager>().levelFailed)
+        {
+            //znajdz canvas (interfejs), znajdz w nim ekran konca poziomu i go w³¹cz
+            GameObject.Find("Canvas").transform.Find("GameOverScreen").gameObject.SetActive(true);
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -91,6 +104,22 @@ public class PlayerController : MonoBehaviour
             //popchnij asteroide
             asteroid.GetComponent<Rigidbody>().AddForce(shieldForce * 5, ForceMode.Impulse);
             shieldCapacity -= 0.25f;
+            if (shieldCapacity <= 0)
+            {
+                //poinformuj level manager, ¿e gra siê skoñczy³a bo nie mamy os³on
+                levelManagerObject.GetComponent<LevelManager>().OnFailure();
+            }
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        //je¿eli dotkniemy znacnzika koñca poziomu to ustaw w levelmanager flagê,
+        //¿e poziom jest ukoñczony
+        if (other.transform.CompareTag("LevelExit"))
+        {
+            //wywo³aj dla LevelManager metodê zakoñczenia poziomu
+            levelManagerObject.GetComponent<LevelManager>().OnSuccess();
         }
     }
 }
