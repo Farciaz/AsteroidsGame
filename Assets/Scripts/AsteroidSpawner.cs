@@ -15,7 +15,7 @@ public class AsteroidSpawner : MonoBehaviour
     float timeSinceSpawn;
 
     //odleg³oœ w jakiej spawnuj¹ siê asteroidy
-    public float spawnDistance = 10;
+    public float spawnDistance = 15;
 
     //odleg³oœæ pomiêdzy asteroidami
     public float safeDistance = 10;

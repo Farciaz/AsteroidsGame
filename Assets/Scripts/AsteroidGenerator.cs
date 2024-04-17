@@ -48,4 +48,12 @@ public class AsteroidGenerator : MonoBehaviour
         //obróæ asteroidê (model) w wyznaczonym kierunku
         model.transform.Rotate(rotation * Time.deltaTime);
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider.CompareTag("Bullet"))
+        {
+            Destroy(gameObject);
+        }
+    }
 }

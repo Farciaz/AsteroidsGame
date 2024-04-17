@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Asteroid
   - LevelExit
+  - Bullet
   layers:
   - Default
   - TransparentFX

@@ -5,6 +5,16 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public float acceleration = 10;
+    public GameObject BulletPrefab;
+
+    private Rigidbody rb;
+    private Vector2 controlls;
+
+
+    private Transform gun;
+    private bool fireButtonDown = false;
+
     public float rotationSpeed = 100f;
     public float flySpeed = 5f;
     //odniesienie do menadzera poziomu
@@ -12,15 +22,27 @@ public class PlayerController : MonoBehaviour
     //stan os³on w procentach (1=100%)
     float shieldCapacity = 1;
 
+
+
     // Start is called before the first frame update
     void Start()
     {
+        rb = GetComponent<Rigidbody>();
+
+        gun = transform.Find("ProjectileSpawn");
+
         levelManagerObject = GameObject.Find("LevelManager");
     }
 
     // Update is called once per frame
     void Update()
     {
+        float v, h;
+        v = Input.GetAxis("Vertical");
+        h = Input.GetAxis("Horizontal");
+        //if(v != 0 && h != 0)
+        controlls = new Vector2(h, v);
+
         //dodaj do wspó³rzêdnych wartoœæ x=1, y=0, z=0 pomno¿one przez czas
         //mierzony w sekundach od ostatniej klatki
         //transform.position += new Vector3(1, 0, 0) * Time.deltaTime;
@@ -59,7 +81,35 @@ public class PlayerController : MonoBehaviour
         //dodaj obrót do obiektu
         //nie mo¿emy u¿yæ += poniewa¿ unity u¿ywa Quaternionów do zapisu rotacji
         transform.Rotate(rotation);
+
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Shoot();
+        }
+
         UpdateUI();
+    }
+
+    void Fixed()
+    {
+
+
+    }
+
+    void Shoot()
+    {
+        Debug.Log("strzal");
+
+
+        GameObject bullet = Instantiate(BulletPrefab, gun.position, Quaternion.identity);
+
+        var bulletRb = bullet.GetComponent<Rigidbody>();
+
+        bulletRb.AddForce(gun.forward * 15, ForceMode.Impulse);
+
+        Debug.Log("strzal 2");
+        Debug.Log(bullet.gameObject.name);
     }
 
     private void UpdateUI()
