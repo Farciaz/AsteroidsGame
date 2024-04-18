@@ -9,6 +9,8 @@ public class AsteroidGenerator : MonoBehaviour
     //wylosowana rotacja/s
     Vector3 rotation = Vector3.one;
 
+    public GameObject explosionEffect;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -53,6 +55,8 @@ public class AsteroidGenerator : MonoBehaviour
     {
         if (collision.collider.CompareTag("Bullet"))
         {
+            Instantiate(explosionEffect, transform.position, Quaternion.identity);
+
             Destroy(gameObject);
         }
     }
