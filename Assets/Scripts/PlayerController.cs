@@ -147,6 +147,7 @@ public class PlayerController : MonoBehaviour
         //sprawdz czy dotknêliœmy asteroidy
         if (collision.collider.transform.CompareTag("Asteroid"))
         {
+
             //transform asteroidy
             Transform asteroid = collision.collider.transform;
             //policz wektor wed³ug którego odepchniemy asteroide
@@ -158,6 +159,7 @@ public class PlayerController : MonoBehaviour
             {
                 //poinformuj level manager, ¿e gra siê skoñczy³a bo nie mamy os³on
                 levelManagerObject.GetComponent<LevelManager>().OnFailure();
+
             }
         }
     }
@@ -172,4 +174,5 @@ public class PlayerController : MonoBehaviour
             levelManagerObject.GetComponent<LevelManager>().OnSuccess();
         }
     }
+
 }
